@@ -1,0 +1,8 @@
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+key.json
+sampledata/
+*.parquet
+.env
