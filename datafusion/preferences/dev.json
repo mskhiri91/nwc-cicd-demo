@@ -1,0 +1,7 @@
+{
+  "bq_project": "mo-skhiri-pg1",
+  "bq_landing_dataset": "landing_dev",
+  "bq_ods_dataset": "ods_dev",
+  "gcs_landing_bucket": "mo-skhiri-pg1-landing-dev",
+  "gcs_temp_bucket": "mo-skhiri-pg1-temp-dev"
+}
