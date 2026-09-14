@@ -4,6 +4,11 @@
 Full load : the historical snapshot, loaded once.
 Delta load: one day of changes, containing inserts, updates and deletes,
             which is what the MERGE logic has to handle correctly.
+
+Written uncompressed (compression=None) because the Spark runtime on the
+Data Fusion instance fails on Snappy with org.xerial.snappy.Snappy.
+Production extracts will be Snappy compressed, so this is a lab workaround,
+not a pattern to carry forward.
 """
 import datetime as dt
 import os
@@ -36,7 +41,8 @@ customers = pd.DataFrame({
     "last_modified_ts": [BASE_TS for _ in range(N_CUST)],
     "is_deleted":       [False] * N_CUST,
 })
-customers.to_parquet(f"{OUT}/full/customer/customer_full.parquet", index=False)
+customers.to_parquet(f"{OUT}/full/customer/customer_full.parquet",
+                     index=False, compression=None)
 
 sales = pd.DataFrame({
     "sale_id":          range(1, N_SALES + 1),
@@ -48,11 +54,12 @@ sales = pd.DataFrame({
     "last_modified_ts": [BASE_TS for _ in range(N_SALES)],
     "is_deleted":       [False] * N_SALES,
 })
-sales.to_parquet(f"{OUT}/full/sales/sales_full.parquet", index=False)
+sales.to_parquet(f"{OUT}/full/sales/sales_full.parquet",
+                 index=False, compression=None)
 
 # ---------- delta load ----------
-# 30 updates, 15 new customers, 5 deletes, plus one duplicate key
-# on purpose so the deduplication step in the MERGE is actually exercised
+# 30 updates, 15 new customers, 5 deletes, plus one duplicate key on purpose
+# so the deduplication step in the MERGE is actually exercised.
 
 delta_ts = dt.datetime.combine(DELTA_DAY, dt.time(6, 0, 0))
 rows = []
@@ -98,7 +105,8 @@ rows.append({
 })
 
 pd.DataFrame(rows).to_parquet(
-    f"{OUT}/delta/customer/customer_delta_{DELTA_DAY:%Y%m%d}.parquet", index=False)
+    f"{OUT}/delta/customer/customer_delta_{DELTA_DAY:%Y%m%d}.parquet",
+    index=False, compression=None)
 
 sales_rows = []
 for sid in random.sample(range(1, N_SALES + 1), 200):         # updates
@@ -123,7 +131,8 @@ for sid in range(N_SALES + 1, N_SALES + 101):                 # inserts
     })
 
 pd.DataFrame(sales_rows).to_parquet(
-    f"{OUT}/delta/sales/sales_delta_{DELTA_DAY:%Y%m%d}.parquet", index=False)
+    f"{OUT}/delta/sales/sales_delta_{DELTA_DAY:%Y%m%d}.parquet",
+    index=False, compression=None)
 
 print("Generated:")
 for root, _, files in os.walk(OUT):

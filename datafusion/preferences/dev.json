@@ -3,5 +3,6 @@
   "bq_landing_dataset": "landing_dev",
   "bq_ods_dataset": "ods_dev",
   "gcs_landing_bucket": "mo-skhiri-pg1-landing-dev",
-  "gcs_temp_bucket": "mo-skhiri-pg1-temp-dev"
+  "gcs_temp_bucket": "mo-skhiri-pg1-temp-dev",
+  "delta_dt": "2026-09-13"
 }

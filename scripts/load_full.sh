@@ -17,3 +17,10 @@ bq --project_id="${BQ_PROJECT}" query --use_legacy_sql=false \
   "SELECT '${BQ_LANDING}.customer_full' t, COUNT(*) n FROM \`${BQ_PROJECT}.${BQ_LANDING}.customer_full\`
    UNION ALL
    SELECT '${BQ_LANDING}.sales_full', COUNT(*) FROM \`${BQ_PROJECT}.${BQ_LANDING}.sales_full\`"
+
+for f in $(ls bigquery/initial_load/*.sql | sort); do
+  echo "==> ${f}"
+  envsubst < "$f" > "/tmp/$(basename "$f")"
+  bq --project_id="${BQ_PROJECT}" --location="${BQ_LOCATION}" \
+     query --use_legacy_sql=false --format=none < "/tmp/$(basename "$f")"
+done
