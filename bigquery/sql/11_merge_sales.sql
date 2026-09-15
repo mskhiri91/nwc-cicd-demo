@@ -5,16 +5,6 @@
 --      batch cannot move the table backwards (idempotency)
 --   3. advance the watermark in the same script
 
-CREATE TABLE IF NOT EXISTS `${BQ_PROJECT}.${BQ_LANDING}.sales_delta` (
-  sale_id          INT64,
-  customer_id      INT64,
-  sale_date        DATE,
-  amount           FLOAT64,
-  quantity         INT64,
-  last_modified_ts TIMESTAMP,
-  is_deleted       BOOL
-);
-
 DECLARE v_watermark TIMESTAMP;
 
 SET v_watermark = (

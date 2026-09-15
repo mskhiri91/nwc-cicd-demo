@@ -5,15 +5,6 @@
 --      so a replayed batch cannot move the table backwards (idempotency)
 --   3. advance the watermark in the same script
 
-CREATE TABLE IF NOT EXISTS `${BQ_PROJECT}.${BQ_LANDING}.customer_delta` (
-  customer_id      INT64,
-  customer_name    STRING,
-  city             STRING,
-  segment          STRING,
-  last_modified_ts TIMESTAMP,
-  is_deleted       BOOL
-);
-
 DECLARE v_watermark TIMESTAMP;
 
 SET v_watermark = (
