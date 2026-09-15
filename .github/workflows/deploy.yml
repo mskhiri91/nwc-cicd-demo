@@ -1,0 +1,106 @@
+name: deploy
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+  workflow_dispatch:
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_VERSION: "1.16.2"
+
+jobs:
+
+  # ---------- gate 1: nothing reaches an environment before this passes ----------
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: terraform fmt and validate
+        working-directory: infra
+        run: |
+          terraform version
+          terraform fmt -check -recursive -diff
+          terraform init -backend=false
+          terraform validate
+
+      - name: BigQuery SQL dry run
+        run: |
+          chmod +x scripts/*.sh
+          ./scripts/deploy_bigquery.sh dev --dry-run
+
+      - name: Data Fusion JSON must be valid and macro driven
+        run: |
+          for f in datafusion/pipelines/*.json; do
+            jq empty "$f" || exit 1
+            grep -q '\${' "$f" || { echo "$f has no macros, hardcoded config"; exit 1; }
+          done
+
+  # ---------- dev: automatic ----------
+  deploy-dev:
+    needs: validate
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+      - name: deploy
+        env:
+          ATSCALE_API_URL:   ${{ secrets.ATSCALE_API_URL_DEV }}
+          ATSCALE_API_TOKEN: ${{ secrets.ATSCALE_API_TOKEN_DEV }}
+        run: |
+          chmod +x scripts/*.sh
+          ./scripts/deploy_all.sh dev
+
+  # ---------- prod: same code, manual approval ----------
+  deploy-prod:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: prod          # required reviewers configured here = the approval gate
+    permissions:
+      contents: write          # needed to push the release tag
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+      - name: deploy
+        env:
+          ATSCALE_API_URL:   ${{ secrets.ATSCALE_API_URL_PROD }}
+          ATSCALE_API_TOKEN: ${{ secrets.ATSCALE_API_TOKEN_PROD }}
+        run: |
+          chmod +x scripts/*.sh
+          ./scripts/deploy_all.sh prod
+      - name: tag the release
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "release-$(date +%Y%m%d-%H%M)"
+          git push --tags
