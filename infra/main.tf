@@ -31,7 +31,7 @@ locals {
   compute_sa = "${data.google_project.this.number}-compute@developer.gserviceaccount.com"
 
   # the Google managed agent that creates those Dataproc clusters
-  df_agent   = "service-${data.google_project.this.number}@gcp-sa-datafusion.iam.gserviceaccount.com"
+  df_agent = "service-${data.google_project.this.number}@gcp-sa-datafusion.iam.gserviceaccount.com"
 }
 
 ########################################
@@ -42,7 +42,7 @@ resource "google_storage_bucket" "landing" {
   name                        = "${var.project_id}-landing-${var.env}"
   location                    = var.region
   uniform_bucket_level_access = true
-  force_destroy               = true   # lab only, never in production
+  force_destroy               = true # lab only, never in production
   labels                      = local.labels
 }
 
@@ -56,7 +56,7 @@ resource "google_storage_bucket" "temp" {
   # Data Fusion staging files are disposable, expire them
   lifecycle_rule {
     condition { age = 7 }
-    action    { type = "Delete" }
+    action { type = "Delete" }
   }
 }
 
@@ -70,7 +70,7 @@ resource "google_bigquery_dataset" "layer" {
   dataset_id                 = "${each.value}_${var.env}"
   location                   = var.bq_location
   labels                     = local.labels
-  delete_contents_on_destroy = true   # lab only
+  delete_contents_on_destroy = true # lab only
   description                = "${each.value} layer for ${var.env}"
 }
 
@@ -85,13 +85,13 @@ resource "google_bigquery_table" "customer" {
   labels              = local.labels
 
   schema = jsonencode([
-    { name = "customer_id",      type = "INTEGER",   mode = "REQUIRED" },
-    { name = "customer_name",    type = "STRING",    mode = "NULLABLE" },
-    { name = "city",             type = "STRING",    mode = "NULLABLE" },
-    { name = "segment",          type = "STRING",    mode = "NULLABLE" },
+    { name = "customer_id", type = "INTEGER", mode = "REQUIRED" },
+    { name = "customer_name", type = "STRING", mode = "NULLABLE" },
+    { name = "city", type = "STRING", mode = "NULLABLE" },
+    { name = "segment", type = "STRING", mode = "NULLABLE" },
     { name = "last_modified_ts", type = "TIMESTAMP", mode = "NULLABLE" },
-    { name = "is_deleted",       type = "BOOLEAN",   mode = "NULLABLE" },
-    { name = "dwh_loaded_ts",    type = "TIMESTAMP", mode = "NULLABLE" },
+    { name = "is_deleted", type = "BOOLEAN", mode = "NULLABLE" },
+    { name = "dwh_loaded_ts", type = "TIMESTAMP", mode = "NULLABLE" },
   ])
 }
 
@@ -108,14 +108,14 @@ resource "google_bigquery_table" "sales" {
   }
 
   schema = jsonencode([
-    { name = "sale_id",          type = "INTEGER",   mode = "REQUIRED" },
-    { name = "customer_id",      type = "INTEGER",   mode = "NULLABLE" },
-    { name = "sale_date",        type = "DATE",      mode = "NULLABLE" },
-    { name = "amount",           type = "NUMERIC",   mode = "NULLABLE" },
-    { name = "quantity",         type = "INTEGER",   mode = "NULLABLE" },
+    { name = "sale_id", type = "INTEGER", mode = "REQUIRED" },
+    { name = "customer_id", type = "INTEGER", mode = "NULLABLE" },
+    { name = "sale_date", type = "DATE", mode = "NULLABLE" },
+    { name = "amount", type = "NUMERIC", mode = "NULLABLE" },
+    { name = "quantity", type = "INTEGER", mode = "NULLABLE" },
     { name = "last_modified_ts", type = "TIMESTAMP", mode = "NULLABLE" },
-    { name = "is_deleted",       type = "BOOLEAN",   mode = "NULLABLE" },
-    { name = "dwh_loaded_ts",    type = "TIMESTAMP", mode = "NULLABLE" },
+    { name = "is_deleted", type = "BOOLEAN", mode = "NULLABLE" },
+    { name = "dwh_loaded_ts", type = "TIMESTAMP", mode = "NULLABLE" },
   ])
 }
 
@@ -127,9 +127,9 @@ resource "google_bigquery_table" "etl_watermark" {
   labels              = local.labels
 
   schema = jsonencode([
-    { name = "table_name",     type = "STRING",    mode = "REQUIRED" },
+    { name = "table_name", type = "STRING", mode = "REQUIRED" },
     { name = "last_watermark", type = "TIMESTAMP", mode = "NULLABLE" },
-    { name = "updated_ts",     type = "TIMESTAMP", mode = "NULLABLE" },
+    { name = "updated_ts", type = "TIMESTAMP", mode = "NULLABLE" },
   ])
 }
 
@@ -141,9 +141,9 @@ resource "google_bigquery_table" "deploy_history" {
   labels              = local.labels
 
   schema = jsonencode([
-    { name = "script_name", type = "STRING",    mode = "REQUIRED" },
-    { name = "git_sha",     type = "STRING",    mode = "NULLABLE" },
-    { name = "applied_ts",  type = "TIMESTAMP", mode = "NULLABLE" },
+    { name = "script_name", type = "STRING", mode = "REQUIRED" },
+    { name = "git_sha", type = "STRING", mode = "NULLABLE" },
+    { name = "applied_ts", type = "TIMESTAMP", mode = "NULLABLE" },
   ])
 }
 
