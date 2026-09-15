@@ -1,121 +1,49 @@
 {
+  "name": "pl_customer_delta",
+  "appVersion": "45850408-b119-11f1-ac9d-7e8ce5e5d3ff",
+  "description": "Data Pipeline Application",
+  "change": {
+    "author": "cdap",
+    "creationTimeMillis": 1789485752650,
+    "latest": true,
+    "description": ""
+  },
+  "configuration": "{\"resources\":{\"memoryMB\":2048.0,\"virtualCores\":1.0},\"driverResources\":{\"memoryMB\":2048.0,\"virtualCores\":1.0},\"connections\":[{\"from\":\"GCS\",\"to\":\"BigQuery\"}],\"comments\":[],\"postActions\":[],\"properties\":{},\"processTimingEnabled\":true,\"stageLoggingEnabled\":false,\"stages\":[{\"name\":\"GCS\",\"plugin\":{\"name\":\"GCSFile\",\"type\":\"batchsource\",\"label\":\"GCS\",\"artifact\":{\"name\":\"google-cloud\",\"version\":\"0.24.1\",\"scope\":\"SYSTEM\"},\"properties\":{\"useConnection\":\"false\",\"project\":\"${bq_project}\",\"serviceAccountType\":\"filePath\",\"serviceFilePath\":\"auto-detect\",\"referenceName\":\"gcs_customer_delta\",\"path\":\"gs://${gcs_landing_bucket}/delta/customer/dt\\u003d${delta_dt}/\",\"format\":\"parquet\",\"sampleSize\":\"1000\",\"filenameOnly\":\"false\",\"recursive\":\"true\",\"ignoreNonExistingFolders\":\"false\",\"encrypted\":\"false\",\"fileEncoding\":\"UTF-8\",\"schema\":\"{\\\"type\\\":\\\"record\\\",\\\"name\\\":\\\"etlSchemaBody\\\",\\\"fields\\\":[{\\\"name\\\":\\\"customer_id\\\",\\\"type\\\":[\\\"long\\\",\\\"null\\\"]},{\\\"name\\\":\\\"customer_name\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"segment\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"last_modified_ts\\\",\\\"type\\\":[{\\\"type\\\":\\\"long\\\",\\\"logicalType\\\":\\\"timestamp-micros\\\"},\\\"null\\\"]},{\\\"name\\\":\\\"is_deleted\\\",\\\"type\\\":[\\\"boolean\\\",\\\"null\\\"]}]}\"}},\"outputSchema\":[{\"name\":\"etlSchemaBody\",\"schema\":\"{\\\"type\\\":\\\"record\\\",\\\"name\\\":\\\"etlSchemaBody\\\",\\\"fields\\\":[{\\\"name\\\":\\\"customer_id\\\",\\\"type\\\":[\\\"long\\\",\\\"null\\\"]},{\\\"name\\\":\\\"customer_name\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"segment\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"last_modified_ts\\\",\\\"type\\\":[{\\\"type\\\":\\\"long\\\",\\\"logicalType\\\":\\\"timestamp-micros\\\"},\\\"null\\\"]},{\\\"name\\\":\\\"is_deleted\\\",\\\"type\\\":[\\\"boolean\\\",\\\"null\\\"]}]}\"}],\"id\":\"GCS\"},{\"name\":\"BigQuery\",\"plugin\":{\"name\":\"BigQueryTable\",\"type\":\"batchsink\",\"label\":\"BigQuery\",\"artifact\":{\"name\":\"google-cloud\",\"version\":\"0.24.1\",\"scope\":\"SYSTEM\"},\"properties\":{\"useConnection\":\"false\",\"project\":\"${bq_project}\",\"serviceAccountType\":\"filePath\",\"serviceFilePath\":\"auto-detect\",\"referenceName\":\"bq_customer_delta\",\"dataset\":\"${bq_landing_dataset}\",\"table\":\"customer_delta\",\"bucket\":\"${gcs_temp_bucket}\",\"operation\":\"insert\",\"truncateTable\":\"true\",\"allowSchemaRelaxation\":\"false\",\"readTimeout\":\"120\",\"location\":\"US\",\"createPartitionedTable\":\"false\",\"partitioningType\":\"TIME\",\"timePartitioningType\":\"DAY\",\"partitionFilterRequired\":\"false\",\"schema\":\"{\\\"type\\\":\\\"record\\\",\\\"name\\\":\\\"etlSchemaBody\\\",\\\"fields\\\":[{\\\"name\\\":\\\"customer_id\\\",\\\"type\\\":[\\\"long\\\",\\\"null\\\"]},{\\\"name\\\":\\\"customer_name\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"segment\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"last_modified_ts\\\",\\\"type\\\":[{\\\"type\\\":\\\"long\\\",\\\"logicalType\\\":\\\"timestamp-micros\\\"},\\\"null\\\"]},{\\\"name\\\":\\\"is_deleted\\\",\\\"type\\\":[\\\"boolean\\\",\\\"null\\\"]}]}\"}},\"outputSchema\":[{\"name\":\"etlSchemaBody\",\"schema\":\"{\\\"type\\\":\\\"record\\\",\\\"name\\\":\\\"etlSchemaBody\\\",\\\"fields\\\":[{\\\"name\\\":\\\"customer_id\\\",\\\"type\\\":[\\\"long\\\",\\\"null\\\"]},{\\\"name\\\":\\\"customer_name\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"segment\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"last_modified_ts\\\",\\\"type\\\":[{\\\"type\\\":\\\"long\\\",\\\"logicalType\\\":\\\"timestamp-micros\\\"},\\\"null\\\"]},{\\\"name\\\":\\\"is_deleted\\\",\\\"type\\\":[\\\"boolean\\\",\\\"null\\\"]}]}\"}],\"inputSchema\":[{\"name\":\"GCS\",\"schema\":\"{\\\"type\\\":\\\"record\\\",\\\"name\\\":\\\"etlSchemaBody\\\",\\\"fields\\\":[{\\\"name\\\":\\\"customer_id\\\",\\\"type\\\":[\\\"long\\\",\\\"null\\\"]},{\\\"name\\\":\\\"customer_name\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"segment\\\",\\\"type\\\":[\\\"string\\\",\\\"null\\\"]},{\\\"name\\\":\\\"last_modified_ts\\\",\\\"type\\\":[{\\\"type\\\":\\\"long\\\",\\\"logicalType\\\":\\\"timestamp-micros\\\"},\\\"null\\\"]},{\\\"name\\\":\\\"is_deleted\\\",\\\"type\\\":[\\\"boolean\\\",\\\"null\\\"]}]}\"}],\"id\":\"BigQuery\"}],\"schedule\":\"0 1 */1 * *\",\"engine\":\"spark\",\"numOfRecordsPreview\":100.0,\"rangeRecordsPreview\":{\"min\":1.0,\"max\":\"5000\"},\"description\":\"Data Pipeline Application\",\"maxConcurrentRuns\":1.0}",
+  "datasets": [],
+  "programs": [
+    {
+      "type": "Spark",
+      "app": "pl_customer_delta",
+      "name": "phase-1",
+      "description": "Sources \u0027GCS\u0027 to sinks \u0027BigQuery\u0027."
+    },
+    {
+      "type": "Workflow",
+      "app": "pl_customer_delta",
+      "name": "DataPipelineWorkflow",
+      "description": "Data Pipeline Workflow"
+    }
+  ],
+  "plugins": [
+    {
+      "id": "BigQuery",
+      "name": "BigQueryTable",
+      "type": "batchsink"
+    },
+    {
+      "id": "GCS:parquet",
+      "name": "parquet",
+      "type": "validatingInputFormat"
+    },
+    {
+      "id": "GCS",
+      "name": "GCSFile",
+      "type": "batchsource"
+    }
+  ],
   "artifact": {
     "name": "cdap-data-pipeline",
     "version": "6.11.1",
     "scope": "SYSTEM"
-  },
-  "config": {
-    "resources": {
-      "memoryMB": 2048.0,
-      "virtualCores": 1.0
-    },
-    "driverResources": {
-      "memoryMB": 2048.0,
-      "virtualCores": 1.0
-    },
-    "connections": [
-      {
-        "from": "GCS",
-        "to": "BigQuery"
-      }
-    ],
-    "comments": [],
-    "postActions": [],
-    "properties": {},
-    "processTimingEnabled": true,
-    "stageLoggingEnabled": false,
-    "stages": [
-      {
-        "name": "GCS",
-        "plugin": {
-          "name": "GCSFile",
-          "type": "batchsource",
-          "label": "GCS",
-          "artifact": {
-            "name": "google-cloud",
-            "version": "0.24.1",
-            "scope": "SYSTEM"
-          },
-          "properties": {
-            "useConnection": "false",
-            "project": "${bq_project}",
-            "serviceAccountType": "filePath",
-            "serviceFilePath": "auto-detect",
-            "referenceName": "gcs_customer_delta",
-            "path": "gs://${gcs_landing_bucket}/delta/customer/dt=${delta_dt}/",
-            "format": "parquet",
-            "sampleSize": "1000",
-            "filenameOnly": "false",
-            "recursive": "true",
-            "ignoreNonExistingFolders": "false",
-            "encrypted": "false",
-            "fileEncoding": "UTF-8",
-            "schema": "{\"type\":\"record\",\"name\":\"schema\",\"fields\":[{\"name\":\"customer_id\",\"type\":[\"null\",\"long\"]},{\"name\":\"customer_name\",\"type\":[\"null\",\"string\"]},{\"name\":\"city\",\"type\":[\"null\",\"string\"]},{\"name\":\"segment\",\"type\":[\"null\",\"string\"]},{\"name\":\"last_modified_ts\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-micros\"}]},{\"name\":\"is_deleted\",\"type\":[\"null\",\"boolean\"]}]}"
-          }
-        },
-        "outputSchema": [
-          {
-            "name": "etlSchemaBody",
-            "schema": "{\"type\":\"record\",\"name\":\"schema\",\"fields\":[{\"name\":\"customer_id\",\"type\":[\"null\",\"long\"]},{\"name\":\"customer_name\",\"type\":[\"null\",\"string\"]},{\"name\":\"city\",\"type\":[\"null\",\"string\"]},{\"name\":\"segment\",\"type\":[\"null\",\"string\"]},{\"name\":\"last_modified_ts\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-micros\"}]},{\"name\":\"is_deleted\",\"type\":[\"null\",\"boolean\"]}]}"
-          }
-        ],
-        "id": "GCS"
-      },
-      {
-        "name": "BigQuery",
-        "plugin": {
-          "name": "BigQueryTable",
-          "type": "batchsink",
-          "label": "BigQuery",
-          "artifact": {
-            "name": "google-cloud",
-            "version": "0.24.1",
-            "scope": "SYSTEM"
-          },
-          "properties": {
-            "useConnection": "false",
-            "project": "${bq_project}",
-            "serviceAccountType": "filePath",
-            "serviceFilePath": "auto-detect",
-            "referenceName": "bq_customer_delta",
-            "dataset": "${bq_landing_dataset}",
-            "table": "customer_delta",
-            "bucket": "${gcs_temp_bucket}",
-            "operation": "insert",
-            "truncateTable": "true",
-            "allowSchemaRelaxation": "false",
-            "readTimeout": "120",
-            "location": "US",
-            "createPartitionedTable": "false",
-            "partitioningType": "TIME",
-            "timePartitioningType": "DAY",
-            "partitionFilterRequired": "false",
-            "schema": "{\"name\":\"etlSchemaBody\",\"type\":\"record\",\"fields\":[{\"name\":\"customer_id\",\"type\":[\"long\",\"null\"]},{\"name\":\"customer_name\",\"type\":[\"string\",\"null\"]},{\"name\":\"city\",\"type\":[\"string\",\"null\"]},{\"name\":\"segment\",\"type\":[\"string\",\"null\"]},{\"name\":\"last_modified_ts\",\"type\":[{\"type\":\"long\",\"logicalType\":\"timestamp-micros\"},\"null\"]},{\"name\":\"is_deleted\",\"type\":[\"boolean\",\"null\"]}]}"
-          }
-        },
-        "outputSchema": [
-          {
-            "name": "etlSchemaBody",
-            "schema": "{\"name\":\"etlSchemaBody\",\"type\":\"record\",\"fields\":[{\"name\":\"customer_id\",\"type\":[\"long\",\"null\"]},{\"name\":\"customer_name\",\"type\":[\"string\",\"null\"]},{\"name\":\"city\",\"type\":[\"string\",\"null\"]},{\"name\":\"segment\",\"type\":[\"string\",\"null\"]},{\"name\":\"last_modified_ts\",\"type\":[{\"type\":\"long\",\"logicalType\":\"timestamp-micros\"},\"null\"]},{\"name\":\"is_deleted\",\"type\":[\"boolean\",\"null\"]}]}"
-          }
-        ],
-        "inputSchema": [
-          {
-            "name": "GCS",
-            "schema": "{\"type\":\"record\",\"name\":\"schema\",\"fields\":[{\"name\":\"customer_id\",\"type\":[\"null\",\"long\"]},{\"name\":\"customer_name\",\"type\":[\"null\",\"string\"]},{\"name\":\"city\",\"type\":[\"null\",\"string\"]},{\"name\":\"segment\",\"type\":[\"null\",\"string\"]},{\"name\":\"last_modified_ts\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-micros\"}]},{\"name\":\"is_deleted\",\"type\":[\"null\",\"boolean\"]}]}"
-          }
-        ],
-        "id": "BigQuery"
-      }
-    ],
-    "schedule": "0 1 */1 * *",
-    "engine": "spark",
-    "numOfRecordsPreview": 100.0,
-    "rangeRecordsPreview": {
-      "min": 1.0,
-      "max": "5000"
-    },
-    "description": "Data Pipeline Application",
-    "maxConcurrentRuns": 1.0
   }
 }
