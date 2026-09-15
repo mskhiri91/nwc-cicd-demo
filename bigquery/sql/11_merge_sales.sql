@@ -4,6 +4,7 @@
 --   2. only apply a change newer than what is already in ODS, so a replayed
 --      batch cannot move the table backwards (idempotency)
 --   3. advance the watermark in the same script
+
 DECLARE v_watermark TIMESTAMP;
 
 SET v_watermark = (
