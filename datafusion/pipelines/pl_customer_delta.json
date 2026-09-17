@@ -1,10 +1,10 @@
 {
   "name": "pl_customer_delta",
-  "appVersion": "a7cba1c2-b289-11f1-9e0d-823c142d0ee9",
+  "appVersion": "0bf8c603-b28a-11f1-91ad-823c142d0ee9",
   "description": "Data Pipeline Application",
   "change": {
     "author": "cdap",
-    "creationTimeMillis": 1789643972353,
+    "creationTimeMillis": 1789644140162,
     "latest": true,
     "description": "added city again"
   },
