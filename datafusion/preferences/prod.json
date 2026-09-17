@@ -1,8 +1,8 @@
 {
-  "bq_project": "mo-skhiri-pg1",
+  "bq_project": "firas-djebbi-pg1",
   "bq_landing_dataset": "landing_prod",
   "bq_ods_dataset": "ods_prod",
-  "gcs_landing_bucket": "mo-skhiri-pg1-landing-prod",
-  "gcs_temp_bucket": "mo-skhiri-pg1-temp-prod",
+  "gcs_landing_bucket": "firas-djebbi-pg1-landing-prod",
+  "gcs_temp_bucket": "firas-djebbi-pg1-temp-prod",
   "delta_dt": "2026-09-13"
 }
