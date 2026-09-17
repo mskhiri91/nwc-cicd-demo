@@ -1,4 +1,4 @@
-project_id        = "mo-skhiri-pg1"
+project_id        = "firas-djebbi-pg1"
 env               = "dev"
 region            = "me-central2"
 bq_location       = "me-central2"
